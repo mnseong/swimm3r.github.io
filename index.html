@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="Swimm3R: Splatting with Medium-aware SfM for Underwater 3D Reconstruction">
+  <meta name="description" content="Swimm3R is a unified framework that combines medium-aware structure-from-motion with Underwater Beta Splatting to address scattering- and attenuation-induced failures in underwater 3D reconstruction.">
+  <meta name="keywords" content="Swimm3R, underwater 3D reconstruction, structure-from-motion, Beta splatting, Gaussian splatting, marine robotics, seafloor mapping, underwater image formation">
+  <meta name="author" content="Minseong Kweon, Junaed Sattar">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Swimm3R">
+  <meta property="og:title" content="Swimm3R: Splatting with Medium-aware SfM for Underwater 3D Reconstruction">
+  <meta property="og:description" content="Swimm3R is a unified framework that combines medium-aware structure-from-motion with Underwater Beta Splatting to address scattering- and attenuation-induced failures in underwater 3D reconstruction.">
+  <meta property="og:url" content="https://swimm3r.github.io">
+  <meta property="og:image" content="https://swimm3r.github.io/assets/images/swimm3r-teaser.png">
+  <meta property="og:image:alt" content="Swimm3R - Underwater 3D Reconstruction">
+  <meta property="article:author" content="Minseong Kweon">
+  <meta property="article:section" content="Research">
+  <meta property="article:tag" content="underwater 3D reconstruction">
+  <meta property="article:tag" content="marine robotics">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Swimm3R: Splatting with Medium-aware SfM for Underwater 3D Reconstruction">
+  <meta name="twitter:description" content="Swimm3R is a unified framework that combines medium-aware structure-from-motion with Underwater Beta Splatting to address scattering- and attenuation-induced failures in underwater 3D reconstruction.">
+  <meta name="twitter:image" content="https://swimm3r.github.io/assets/images/swimm3r-teaser.png">
+  <meta name="twitter:image:alt" content="Swimm3R - Underwater 3D Reconstruction">
+
+  <meta name="citation_title" content="Swimm3R: Splatting with Medium-aware SfM for Underwater 3D Reconstruction">
+  <meta name="citation_author" content="Kweon, Minseong">
+  <meta name="citation_author" content="Sattar, Junaed">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_pdf_url" content="https://swimm3r.github.io/static/pdfs/paper.pdf">
+
+  <meta name="theme-color" content="#06283D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>Swimm3R: Splatting with Medium-aware SfM for Underwater 3D Reconstruction</title>
+  <link rel="canonical" href="https://swimm3r.github.io/">
+
+  <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+</head>
+<body>
+
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+
+  <section class="hero deep-hero">
+    <div class="caustics" aria-hidden="true"></div>
+    <span class="bubble" style="left:6%;  width:9px;  height:9px;  animation-duration:11s;   animation-delay:0s;"   aria-hidden="true"></span>
+    <span class="bubble" style="left:14%; width:5px;  height:5px;  animation-duration:14s;   animation-delay:2.5s;" aria-hidden="true"></span>
+    <span class="bubble" style="left:24%; width:12px; height:12px; animation-duration:12s;   animation-delay:5s;"   aria-hidden="true"></span>
+    <span class="bubble" style="left:47%; width:6px;  height:6px;  animation-duration:15s;   animation-delay:1s;"   aria-hidden="true"></span>
+    <span class="bubble" style="left:66%; width:10px; height:10px; animation-duration:10.5s; animation-delay:3.5s;" aria-hidden="true"></span>
+    <span class="bubble" style="left:79%; width:5px;  height:5px;  animation-duration:13s;   animation-delay:6s;"   aria-hidden="true"></span>
+    <span class="bubble" style="left:91%; width:8px;  height:8px;  animation-duration:11.5s; animation-delay:4.2s;" aria-hidden="true"></span>
+    <div class="hero-body">
+      <div class="container is-max-widescreen">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title" data-text="Swimm3R: Splatting with Medium-aware SfM&#10;for Underwater 3D Reconstruction"><span class="t1">Swimm3R: Splatting with Medium-aware SfM</span><span class="t2">for Underwater 3D Reconstruction</span></h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                Minseong Kweon
+                <span class="and-word">and</span>
+                Junaed Sattar</span>
+            </div>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://irvlab.cs.umn.edu/" target="_blank" rel="noopener noreferrer" class="affil-link">University of Minnesota, IRV Lab</a>
+              </span>
+              <br>
+              <span class="under-review-badge">Under Review</span>
+            </div>
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/XXXX.XXXXX" target="_blank" rel="noopener noreferrer" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="ai ai-arxiv"></i></span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <span class="external-link button is-normal is-rounded is-dark is-static disabled-btn">
+                    <span class="icon"><i class="fab fa-github"></i></span>
+                    <span>Code (Coming Soon)</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section teaser-video-section">
+    <div class="container is-max-desktop">
+      <div class="teaser-video-frame">
+        <video
+          class="teaser-video"
+          src="assets/videos/swimm3r-teaser.mp4"
+          poster="assets/images/swimm3r-teaser-poster.jpg"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          controls>
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="interactive-sfm">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Interactive SfM Result</h2>
+      <p class="viewer-lead">Compare underwater point clouds reconstructed by COLMAP, GLUEMAP, MASt3R-SfM, and Swimm3R across the four Barbados scenes. Drag to rotate, scroll to zoom.</p>
+      <div id="viewer3d-root"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              We propose Swimm3R, a unified framework that combines medium-aware structure-from-motion (SfM) with Underwater Beta Splatting to address scattering- and attenuation-induced failures in underwater 3D reconstruction.
+              Swimm3R distills in-air geometric priors into a feed-forward backbone and uses a physics head to regress underwater image-formation parameters, camera poses, and restored point clouds.
+              Additionally, we introduce Underwater Beta Splatting, which extends Gaussian splatting with Beta primitives and scattering-aware geometric gradients for stable underwater geometry representation.
+              We further establish the Barbados underwater video dataset to demonstrate the effectiveness of our method in challenging underwater environments.
+              On this dataset, Swimm3R robustly recovers underwater scene structure under challenging scattering conditions, yielding coherent seafloor geometry.
+              Using these predicted point clouds, the proposed Underwater Beta Splatting improves average PSNR by 1.47 dB over WaterSplatting while increasing downstream localization performance by 2.0 and 2.4 percentage points in RRA@15 and RTA@15, respectively.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section" id="method">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Swimm3R</h2>
+      <div class="content">
+        <figure>
+          <img src="assets/images/swimm3r-overview.png" alt="Overview of the Swimm3R pipeline: LoRA fine-tuned medium-aware SfM feeding Underwater Beta Splatting" loading="lazy"/>
+          <figcaption class="fig-caption">
+            <strong>Overview of Swimm3R.</strong> Our model learns medium-aware SfM from raw underwater images via LoRA fine-tuning, whose estimated camera poses and point clouds provide rich geometric priors for underwater Beta splatting.
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="performance">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Performance Comparison</h2>
+      <div class="content">
+        <figure>
+          <img src="assets/images/rendering-qual.png" alt="Qualitative comparison of RGB and depth across SfM initializations and renderers" loading="lazy"/>
+          <figcaption class="fig-caption">
+            <strong>Qualitative comparison of RGB and depth</strong> across SfM initializations (rows) and renderers (columns). UWBS preserves sharper scene structure and more consistent medium boundaries than prior methods, qualitatively suggesting more coherent appearance and depth under underwater scattering.
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="assets/images/rendering-quant.png" alt="Quantitative comparison of test-frame rendering quality on the Barbados dataset" loading="lazy"/>
+          <figcaption class="fig-caption">
+            <strong>Quantitative comparison of test-frame rendering quality</strong> on the Barbados dataset across feed-forward SfM initializations and renderers.
+          </figcaption>
+        </figure>
+
+        <figure>
+          <img src="assets/images/loc-qual.png" alt="Qualitative query-to-render feature matching for visual localization" loading="lazy"/>
+          <figcaption class="fig-caption">
+            <strong>Qualitative query-to-render feature matching for visual localization.</strong> UWBS produces more coherent matches across underwater appearance changes, showing that its rendered maps provide more reliable 2D correspondences and render-depth for downstream PnP pose estimation.
+          </figcaption>
+        </figure>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="bibtex">
+    <div class="container is-max-desktop">
+      <div class="bibtex-header">
+        <h2 class="title is-3">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" aria-label="Copy BibTeX to clipboard">
+          <span class="icon"><i class="fas fa-copy"></i></span>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre><code id="bibtex-code">@article{kweon2026swimm3r,
+  title   = {Swimm3R: Splatting with Medium-aware SfM for Underwater 3D Reconstruction},
+  author  = {Kweon, Minseong and Sattar, Junaed},
+  journal = {arXiv preprint arXiv:XXXX.XXXXX},
+  year    = {2026}
+}</code></pre>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener noreferrer">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank" rel="noopener noreferrer">Nerfies</a> project page.
+              You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="static/js/viewer3d.js"></script>
+
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function copyBibTeX() {
+      var code = document.getElementById('bibtex-code');
+      var btn = document.querySelector('.copy-bibtex-btn');
+      var label = btn.querySelector('.copy-text');
+      function done() {
+        btn.classList.add('copied');
+        label.textContent = 'Copied!';
+        setTimeout(function () {
+          btn.classList.remove('copied');
+          label.textContent = 'Copy';
+        }, 2000);
+      }
+      navigator.clipboard.writeText(code.textContent).then(done).catch(function () {
+        var ta = document.createElement('textarea');
+        ta.value = code.textContent;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        done();
+      });
+    }
+    window.addEventListener('scroll', function () {
+      var btn = document.querySelector('.scroll-to-top');
+      if (window.scrollY > 400) { btn.classList.add('visible'); }
+      else { btn.classList.remove('visible'); }
+    });
+  </script>
+
+</body>
+</html>
