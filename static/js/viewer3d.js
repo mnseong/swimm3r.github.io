@@ -121,6 +121,8 @@ const loadingPct = document.getElementById('v3d-loading-pct');
 let currentPoints = null;
 let loadToken = 0;
 let loadingStartedAt = 0;
+let viewerVisible = false;
+let needsRender = true;
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('static/js/draco/');
@@ -133,15 +135,28 @@ function resize() {
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
+  needsRender = true;
 }
 
 new ResizeObserver(resize).observe(wrap);
 resize();
 
+new IntersectionObserver((entries) => {
+  viewerVisible = entries[0].isIntersecting;
+  if (viewerVisible) needsRender = true;
+}, { threshold: 0.01 }).observe(wrap);
+
+controls.addEventListener('change', () => {
+  needsRender = true;
+});
+
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
+  if (!viewerVisible) return;
+  const moved = controls.update();
+  if (!moved && !needsRender) return;
   renderer.render(scene3d, camera);
+  needsRender = false;
 }
 animate();
 
@@ -249,6 +264,7 @@ function loadPointCloud() {
       camera.position.set(0, NORMALIZED_EXTENT * 0.28, NORMALIZED_EXTENT * 0.95);
       controls.target.set(0, 0, 0);
       controls.update();
+      needsRender = true;
 
       const count = geometry.getAttribute('position').count;
       statusEl.textContent = methodLabel + ' · ' + sceneLabel + ' — ' + count.toLocaleString() + ' points';
